@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document</title>
+</head>
+<body>
+  <h1>Hello</h1>
+  <h2>this is real time chat application</h2>
+  <!-- <button onclick="createConnection()">Create WS Connection</button> -->
+  <input type="text" id="message" placeholder="Enter the message" />
+  <button id="sendBtn">Send</button>
+  <div id="messages"></div>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io(); // Create the socket connection globally
+
+    function createConnection() {
+      const sendBtn = document.getElementById("sendBtn");
+      const messageInput = document.getElementById("message");
+      const allMessages = document.getElementById("messages");
+
+      sendBtn.addEventListener("click", () => {
+        const message = messageInput.value;
+        console.log(message);
+        // Emit the message to the server
+        socket.emit("User-message", message);
+
+        // Create a new paragraph element to display the message
+        const p = document.createElement("p");
+        p.innerText = message;
+
+        // Append the paragraph element to the container in the DOM
+        allMessages.appendChild(p);
+
+        // Clear the input field after sending the message
+        messageInput.value = "";
+      });
+
+      // Listen for incoming messages from the server
+      socket.on("User-message", (message) => {
+        // Create a new paragraph element to display the received message
+        const p = document.createElement("p");
+        p.innerText = message;
+
+        // Append the paragraph element to the container in the DOM
+        allMessages.appendChild(p);
+      });
+    }
+
+    // Call createConnection when the page is loaded
+    window.onload = createConnection;
+  </script>
+</body>
+</html>
